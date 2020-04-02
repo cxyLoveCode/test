@@ -1,0 +1,31 @@
+#name
+a1.sources=r1
+a1.channels=c1 
+a1.sinks=k1 
+
+# configure source
+a1.sources.r1.type = exec
+a1.sources.r1.command = tail -F /var/log/messages
+a1.sources.r1.channels = c1 
+
+#interceptor
+a1.sources.r1.interceptors = i1 i2 i3  
+a1.sources.r1.interceptors.i1.type = org.apache.flume.interceptor.HostInterceptor$Builder
+a1.sources.r1.interceptors.i1.preserveExisting = false
+a1.sources.r1.interceptors.i1.hostHeader = hostname
+a1.sources.r1.interceptors.i2.type = timestamp 
+a1.sources.r1.interceptors.i3.type = com.ccc.intercepter.Splitintercepter$Builder
+
+# configure channel
+a1.channels.c1.type = memory
+a1.channels.c1.capacity=10000
+a1.channels.c1.byteCapacityBufferPercentage=20
+
+# configure sink
+a1.sinks.k1.type = org.apache.flume.sink.kafka.KafkaSink
+a1.sinks.k1.kafka.topic = linux_message
+a1.sinks.k1.kafka.bootstrap.servers = 10.8.20.71:9092,10.8.20.72:9092,10.8.20.73:9092,10.8.20.74:9092,10.8.20.75:9092,10.8.20.76:9092,10.8.20.77:9092
+a1.sinks.k1.kafka.flumeBatchSize = 2000
+a1.sinks.k1.kafka.producer.acks = 1
+a1.sinks.k1.channel = c1
+
